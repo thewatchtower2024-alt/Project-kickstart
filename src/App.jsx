@@ -58,13 +58,13 @@ const COMPLEXITY = {
 
 // ── Pipeline steps ────────────────────────────────────────────────────────────
 const PIPELINE_STEPS = [
-  { id: "classify",     label: "Analyzing & classifying idea",         icon: "◎" },
-  { id: "research",     label: "Researching domain & tech landscape",  icon: "⬡" },
-  { id: "brd",          label: "Generating Business Requirements",     icon: "▣" },
-  { id: "storymap",     label: "Building story map",                   icon: "◈" },
-  { id: "techdoc",      label: "Drafting technical architecture",      icon: "⬡" },
-  { id: "risks",        label: "Identifying risks & dependencies",     icon: "⚠" },
-  { id: "stakeholder",  label: "Creating stakeholder artifacts",       icon: "◉" },
+  { id: "classify",     label: "Analyzing & classifying idea",                      icon: "◎" },
+  { id: "research",     label: "Researching domain & tech landscape",               icon: "⬡" },
+  { id: "brd",          label: "Generating Business Requirements (BRD)",            icon: "▣" },
+  { id: "storymap",     label: "Building story map",                                icon: "◈" },
+  { id: "techdoc",      label: "Drafting technical architecture",                   icon: "⬡" },
+  { id: "risks",        label: "Identifying risks & dependencies",                  icon: "⚠" },
+  { id: "stakeholder",  label: "Creating stakeholder artifacts",                    icon: "◉" },
 ];
 
 // ── CSS ───────────────────────────────────────────────────────────────────────
@@ -605,6 +605,9 @@ export default function App() {
   };
 
   // ── Run pipeline ─────────────────────────────────────────────────────────
+  const delay = (ms) => new Promise(r => setTimeout(r, ms));
+  const STEP_DELAY = 12000; // 12s between calls — keeps under 30k token/min rate limit
+
   const runPipeline = useCallback(async () => {
     if (!idea.trim()) return;
     if (!apiKey) { alert("Please enter your Anthropic API key in the header."); return; }
@@ -622,24 +625,29 @@ export default function App() {
       if (!cls) throw new Error("Classification failed — could not parse AI response.");
       setClassification(cls);
       setPipeStep(2);
+      await delay(STEP_DELAY);
 
       // Step 2: BRD
       const brdText = await callClaude(SYS_DOCS, buildBRDPrompt(idea, cls), apiKey, 3000);
       setPipeStep(3);
+      await delay(STEP_DELAY);
 
       // Step 3: Story Map
       const storyRaw = await callClaude(SYS_DOCS, buildStoryMapPrompt(idea, cls), apiKey, 3000);
       const storyMap = parseJSON(storyRaw);
       setPipeStep(4);
+      await delay(STEP_DELAY);
 
       // Step 4: Technical doc
       const techText = await callClaude(SYS_DOCS, buildTechDocPrompt(idea, cls), apiKey, 3000);
       setPipeStep(5);
+      await delay(STEP_DELAY);
 
       // Step 5: Risks
       const riskRaw = await callClaude(SYS_DOCS, buildRiskPrompt(idea, cls), apiKey, 2000);
       const risks = parseJSON(riskRaw);
       setPipeStep(6);
+      await delay(STEP_DELAY);
 
       // Step 6: Stakeholder artifacts
       const stakeRaw = await callClaude(SYS_DOCS, buildStakeholderPrompt(idea, cls), apiKey, 2500);
