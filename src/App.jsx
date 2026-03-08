@@ -454,7 +454,7 @@ Write the BRD with these sections:
 ## Timeline Estimate
 ## Approval`;
 
-const buildStoryMapPrompt = (idea, classification) => `Generate a story map as JSON. Be thorough — 3-5 user groups, 2-4 journeys per group, 2-4 epics per journey, 3-6 stories per epic.
+const buildStoryMapPrompt = (idea, classification) => `Generate a story map as JSON. Keep it concise: 2-3 user groups, 2-3 journeys per group, 2-3 epics per journey, 2-4 stories per epic. Return ONLY valid JSON — no markdown, no explanation, no preamble.
 
 PROJECT: ${classification.projectTitle}
 WORK TYPE: ${classification.workType}
@@ -633,8 +633,8 @@ export default function App() {
       await delay(STEP_DELAY);
 
       // Step 3: Story Map
-      const storyRaw = await callClaude(SYS_DOCS, buildStoryMapPrompt(idea, cls), apiKey, 3000);
-      const storyMap = parseJSON(storyRaw);
+      const storyRaw = await callClaude(SYS_DOCS, buildStoryMapPrompt(idea, cls), apiKey, 4000);
+      const storyMap = parseJSON(storyRaw) || { userGroups: [], _error: "Story map could not be parsed — try regenerating." };
       setPipeStep(4);
       await delay(STEP_DELAY);
 
