@@ -67,6 +67,421 @@ const PIPELINE_STEPS = [
   { id: "stakeholder",  label: "Creating stakeholder artifacts",                    icon: "◉" },
 ];
 
+// ── Project templates ─────────────────────────────────────────────────────────
+const TEMPLATES_BY_DURATION = [
+  {
+    id: "quick-win",
+    label: "⚡ Quick Win",
+    sublabel: "1–2 weeks",
+    text: `Quick win project — [brief title]
+
+What needs to happen:
+[Describe the specific, bounded problem to solve in 1-2 sentences]
+
+Current pain point:
+[What is broken, slow, or missing today? Who is affected?]
+
+Proposed solution:
+[What is the simplest possible fix or addition?]
+
+Done when:
+[What does success look like? Name 1-2 measurable outcomes]
+
+Constraints:
+- Timeline: 1–2 weeks
+- Team: [Solo dev / pair / small team]
+- Any hard dependencies or blockers?`,
+  },
+  {
+    id: "short-sprint",
+    label: "🏃 Short Sprint",
+    sublabel: "2–6 weeks",
+    text: `Short sprint project — [feature or initiative title]
+
+Business context:
+[Why does this matter right now? What business goal does it serve?]
+
+Scope of work:
+[Describe the core feature set or changes at a high level — 3-5 sentences]
+
+Primary users:
+[Who will use or be affected by this? Internal team / external customers / both?]
+
+Key deliverables:
+1. [Deliverable 1]
+2. [Deliverable 2]
+3. [Deliverable 3]
+
+Out of scope for this sprint:
+[List anything explicitly deferred to avoid scope creep]
+
+Success criteria:
+[How will you measure that this sprint was successful?]`,
+  },
+  {
+    id: "medium-project",
+    label: "📋 Medium Project",
+    sublabel: "6–12 weeks",
+    text: `Medium-scale project — [project name]
+
+Executive summary:
+[2-3 sentences on what this project is, why it's being done, and who it's for]
+
+Business problem:
+[What problem does this solve? What is the cost of not doing it?]
+
+Proposed solution overview:
+[Describe the solution at a product/feature level — what will be built?]
+
+Target users & use cases:
+[Primary users and the top 3-5 use cases they'll have]
+
+Core feature set (MVP):
+- [Feature 1]
+- [Feature 2]
+- [Feature 3]
+
+Integrations & dependencies:
+[Any external systems, APIs, or platforms this must connect to?]
+
+Technical considerations:
+[Any known tech constraints, preferred stack, or architecture preferences?]
+
+Success metrics:
+[Quantifiable outcomes expected after launch]`,
+  },
+  {
+    id: "long-haul",
+    label: "🚀 Long Haul",
+    sublabel: "12+ weeks",
+    text: `Large-scale initiative — [program or platform name]
+
+Strategic context:
+[Why is this initiative happening now? What strategy or OKR does it support?]
+
+Vision statement:
+[In one sentence, what does success look like 12 months from now?]
+
+Problem landscape:
+[What is the full scope of the problem? Who are all the stakeholders affected?]
+
+Proposed platform / solution:
+[Describe the end-state system or product at a high level]
+
+Phased delivery approach:
+Phase 1 (MVP — weeks 1-6): [core capabilities]
+Phase 2 (weeks 7-12): [expanded features]
+Phase 3 (weeks 13+): [scale / polish / advanced capabilities]
+
+Key workstreams:
+- [Workstream 1: e.g., Backend infrastructure]
+- [Workstream 2: e.g., Frontend / UX]
+- [Workstream 3: e.g., Integrations]
+- [Workstream 4: e.g., Data & reporting]
+
+Stakeholders & team structure:
+[Sponsor, PM, tech lead, cross-functional teams involved]
+
+Risks & assumptions:
+[Top 3 risks and key assumptions the project depends on]
+
+Success metrics & KPIs:
+[Business and technical KPIs that will be tracked]`,
+  },
+];
+
+const TEMPLATES_BY_TYPE = [
+  {
+    id: "saas-app",
+    label: "☁️ SaaS Application",
+    text: `New SaaS application — [product name]
+
+Product concept:
+[What does this SaaS do in one sentence? What is the core value proposition?]
+
+Target market:
+[Who is the ideal customer? Industry, company size, role?]
+
+Core functionality:
+[List the 4-6 main features the product must have at launch]
+- 
+- 
+- 
+
+Subscription & pricing model:
+[Free tier / freemium / per seat / usage-based? Any enterprise tier?]
+
+Multi-tenancy requirements:
+[How is tenant data isolated? Any white-labeling needs?]
+
+Auth & access control:
+[SSO / OAuth / email-password? Role-based access control needs?]
+
+Key integrations:
+[Which third-party tools must this connect with at launch?]
+
+Compliance & data residency:
+[Any SOC2, GDPR, HIPAA, or data residency requirements?]
+
+Competitive landscape:
+[Name 1-3 competitors. What will differentiate this product?]`,
+  },
+  {
+    id: "database",
+    label: "🗄️ Database Design",
+    text: `Database design / creation — [system or domain name]
+
+Purpose:
+[What is this database for? What problem does it solve?]
+
+Data domain:
+[What real-world entities does this data represent? e.g., customers, orders, products]
+
+Core entities & relationships:
+[List the main tables/collections and how they relate to each other]
+- Entity 1: [description]
+- Entity 2: [description + relationship to Entity 1]
+- Entity 3: [description + relationships]
+
+Data volume & scale expectations:
+[Rows per table at launch vs. 1-year projection. Read-heavy or write-heavy?]
+
+Query patterns:
+[What are the most common read queries? Any complex joins or aggregations?]
+
+Database type preference:
+[Relational (PostgreSQL/MySQL) / Document (MongoDB) / Time-series / Graph / Other?]
+
+Existing data to migrate:
+[Is there legacy data to import? Format, volume, quality?]
+
+Access patterns:
+[Which systems/services will read and write to this database?]
+
+Retention & archiving:
+[How long is data kept? Any archiving or purge requirements?]`,
+  },
+  {
+    id: "api-enhancement",
+    label: "🔌 API Enhancement",
+    text: `API enhancement / new endpoints — [API or service name]
+
+Current state:
+[Brief description of the existing API — what does it do today?]
+
+Enhancement needed:
+[What new capability, endpoint, or behavior is being added? Why?]
+
+New endpoints / changes:
+[List the specific endpoints being added or modified]
+- POST /[resource]: [purpose]
+- GET /[resource]/{id}: [purpose]
+- [Additional endpoints]
+
+Request / response shape:
+[Describe the key request fields and expected response structure]
+
+Authentication & authorization:
+[How are callers authenticated? Any new permission scopes needed?]
+
+Consumers of this API:
+[Who calls this API? Internal services, mobile apps, third parties?]
+
+Breaking changes:
+[Will this change any existing contracts? Versioning strategy?]
+
+Rate limiting & SLAs:
+[Expected call volume. Any latency or throughput SLAs?]
+
+Error handling:
+[Key error scenarios and how they should be communicated to callers]`,
+  },
+  {
+    id: "integration",
+    label: "🔗 Third-Party Integration",
+    text: `Third-party integration — [System A] ↔ [System B]
+
+Integration overview:
+[What two (or more) systems are being connected and why?]
+
+Business trigger:
+[What business event or process requires this integration?]
+
+Data flow direction:
+[ ] One-way: [Source] → [Destination]
+[ ] Bidirectional sync
+[ ] Event-driven / webhook
+
+Data to be exchanged:
+[What data objects are moving between systems? e.g., customers, orders, events]
+
+Mapping & transformation rules:
+[Are field names / formats different between systems? Any data enrichment needed?]
+
+Sync frequency:
+[Real-time / near-real-time / scheduled batch? Acceptable latency?]
+
+Conflict resolution:
+[If both systems update the same record, which wins? How are conflicts handled?]
+
+Error handling & retry:
+[What happens when the integration fails? Alerting, retry logic, dead-letter queues?]
+
+Authentication to external system:
+[API key / OAuth / webhook secret / IP allowlist?]
+
+Volume & throughput:
+[Expected records per sync. Peak load considerations?]`,
+  },
+  {
+    id: "internal-tool",
+    label: "🛠️ Internal Tool / Dashboard",
+    text: `Internal tool / dashboard — [tool name]
+
+Who is this for:
+[Which internal team(s) will use this? Ops, finance, support, engineering?]
+
+Problem it solves:
+[What manual process, spreadsheet, or gap does this replace or improve?]
+
+Core views / screens:
+[List the main pages or views the tool needs]
+- Dashboard / overview
+- [View 2]
+- [View 3]
+
+Key data sources:
+[Where does the data come from? Which databases, APIs, or external systems?]
+
+Core actions users need to take:
+[Not just viewing data — what can users do? Approve, reject, export, trigger?]
+
+Access control:
+[Who can see what? Are there admin vs. read-only roles?]
+
+Automation / alerts:
+[Should the tool send notifications, emails, or trigger other systems?]
+
+Reporting needs:
+[Any exports, scheduled reports, or audit logs required?]
+
+Hosting preference:
+[Internal only / VPN-gated / cloud-hosted? Authentication method?]`,
+  },
+  {
+    id: "data-pipeline",
+    label: "📊 Data Pipeline / ETL",
+    text: `Data pipeline / ETL — [pipeline name]
+
+Pipeline purpose:
+[What data is being moved, transformed, and where does it end up?]
+
+Source systems:
+[List all data sources — databases, APIs, files, streams, SaaS tools]
+- Source 1: [type, format, volume]
+- Source 2: [type, format, volume]
+
+Destination / sink:
+[Data warehouse, data lake, analytics DB, reporting tool, or another system?]
+
+Transformation logic:
+[What cleaning, enrichment, joining, or business logic is applied mid-pipeline?]
+
+Schedule & latency:
+[Batch (hourly/daily/weekly) or streaming (real-time)? Acceptable lag?]
+
+Data quality requirements:
+[Validation rules, deduplication, null handling, schema enforcement?]
+
+Volume & scale:
+[Records per run at launch. Growth trajectory?]
+
+Orchestration preference:
+[Airflow / dbt / Prefect / custom scripts / cloud-native (Glue, Dataflow)?]
+
+Failure handling:
+[What happens on partial failure? Re-run strategy, alerting, data lineage tracking?]
+
+Consumers of the output:
+[Who queries the processed data? BI team, ML models, downstream services?]`,
+  },
+  {
+    id: "mobile-app",
+    label: "📱 Mobile Application",
+    text: `Mobile application — [app name]
+
+App concept:
+[What does this app do in one sentence?]
+
+Target platform:
+[ ] iOS only
+[ ] Android only  
+[ ] Cross-platform (React Native / Flutter / PWA)
+
+Target users:
+[Who are the primary users? Consumer / enterprise / field workers?]
+
+Core screens & user flows:
+[List the 5-8 primary screens and the main navigation flow]
+1. [Screen 1 — e.g., Onboarding / Login]
+2. [Screen 2 — e.g., Home / Dashboard]
+3. [Screen 3]
+
+Offline capability:
+[Does the app need to work without internet? What data must be cached locally?]
+
+Native device features:
+[Camera, GPS, push notifications, biometrics, NFC, Bluetooth, etc.?]
+
+Backend / API:
+[Existing API to connect to, or does a new backend need to be built?]
+
+App store distribution:
+[Public app store / enterprise MDM / TestFlight beta only?]
+
+Performance expectations:
+[Any hard requirements on load time, frame rate, or offline sync speed?]`,
+  },
+  {
+    id: "migration",
+    label: "🔄 Legacy Migration",
+    text: `Legacy migration — [legacy system] → [target system]
+
+What is being migrated:
+[Describe the legacy system and what is moving — data, workflows, users, or all three?]
+
+Legacy system details:
+[Technology, age, current usage, known pain points]
+
+Target system / platform:
+[What is the destination? New platform, cloud service, or greenfield build?]
+
+Migration scope:
+[ ] Data only
+[ ] Application / codebase  
+[ ] Data + application
+[ ] Users / workflows / processes
+
+Data volume:
+[How many records / GB / TB are being migrated?]
+
+Data quality & cleanup:
+[Is source data clean? Any deduplication, normalization, or enrichment needed?]
+
+Cutover strategy:
+[Big-bang cutover / phased / parallel run? Rollback plan?]
+
+Downtime tolerance:
+[Is any downtime acceptable? Maintenance window constraints?]
+
+Validation approach:
+[How will you verify the migration was successful? Reconciliation process?]
+
+Stakeholder impact:
+[Which users or teams are affected? Change management / training needs?]`,
+  },
+];
+
 // ── CSS ───────────────────────────────────────────────────────────────────────
 const CSS = `
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -119,7 +534,43 @@ const CSS = `
   .main { flex: 1; display: flex; flex-direction: column; padding: 32px; max-width: 1400px;
     width: 100%; margin: 0 auto; gap: 24px; }
 
-  /* ── Input phase ── */
+  /* ── Template picker ── */
+  .tmpl-bar {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .tmpl-label {
+    font-size: 10px; font-family: 'JetBrains Mono',monospace; color: #9ca3af;
+    text-transform: uppercase; letter-spacing: .1em; white-space: nowrap;
+  }
+  .tmpl-select {
+    flex: 1; min-width: 160px; max-width: 260px;
+    background: #fff; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px;
+    padding: 7px 10px; font-family: 'Outfit',sans-serif; font-size: 13px;
+    color: #374151; cursor: pointer; outline: none;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+    padding-right: 28px; transition: border-color .15s;
+  }
+  .tmpl-select:hover { border-color: rgba(0,0,0,0.22); }
+  .tmpl-select:focus { border-color: #d97706; box-shadow: 0 0 0 2px rgba(217,119,6,0.12); }
+  .tmpl-divider { width: 1px; height: 20px; background: rgba(0,0,0,0.1); }
+  .tmpl-apply {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(217,119,6,0.08); border: 1px solid rgba(217,119,6,0.2);
+    border-radius: 8px; padding: 7px 14px; font-family: 'Outfit',sans-serif;
+    font-size: 12px; font-weight: 700; color: #d97706; cursor: pointer;
+    transition: all .15s; white-space: nowrap;
+  }
+  .tmpl-apply:hover { background: rgba(217,119,6,0.14); }
+  .tmpl-apply:disabled { opacity: .35; cursor: not-allowed; }
+  .tmpl-clear {
+    background: none; border: none; font-size: 12px; color: #9ca3af;
+    cursor: pointer; padding: 4px 6px; border-radius: 5px; transition: color .15s;
+  }
+  .tmpl-clear:hover { color: #374151; }
+
+
   .input-phase { max-width: 820px; margin: 0 auto; width: 100%; padding-top: 40px; }
   .big-label {
     font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 4px;
@@ -577,9 +1028,19 @@ Return ONLY this JSON:
 export default function App() {
   const [apiKey,   setApiKey]   = useState(import.meta.env.VITE_ANTHROPIC_API_KEY || "");
   const [idea,     setIdea]     = useState("");
-  const [phase,    setPhase]    = useState("idle"); // idle|running|complete|error
-  const [pipeStep, setPipeStep] = useState(-1);     // current pipeline step index
+  const [phase,    setPhase]    = useState("idle");
+  const [pipeStep, setPipeStep] = useState(-1);
   const [error,    setError]    = useState("");
+
+  const [tmplDuration, setTmplDuration] = useState("");
+  const [tmplType,     setTmplType]     = useState("");
+
+  const applyTemplate = () => {
+    const byDur  = TEMPLATES_BY_DURATION.find(t => t.id === tmplDuration);
+    const byType = TEMPLATES_BY_TYPE.find(t => t.id === tmplType);
+    const chosen = byDur || byType;
+    if (chosen) setIdea(chosen.text);
+  };
 
   const [classification, setClassification] = useState(null);
   const [documents,      setDocuments]      = useState(null);
@@ -756,6 +1217,43 @@ export default function App() {
                     style={{color:"#f59e0b"}}>Get a key →</a>
                 </div>
               )}
+
+              <div className="tmpl-bar">
+                <span className="tmpl-label">Templates →</span>
+                <select
+                  className="tmpl-select"
+                  value={tmplDuration}
+                  onChange={e => { setTmplDuration(e.target.value); setTmplType(""); }}
+                >
+                  <option value="">By Duration…</option>
+                  {TEMPLATES_BY_DURATION.map(t => (
+                    <option key={t.id} value={t.id}>{t.label} · {t.sublabel}</option>
+                  ))}
+                </select>
+                <span className="tmpl-divider" />
+                <select
+                  className="tmpl-select"
+                  value={tmplType}
+                  onChange={e => { setTmplType(e.target.value); setTmplDuration(""); }}
+                >
+                  <option value="">By Project Type…</option>
+                  {TEMPLATES_BY_TYPE.map(t => (
+                    <option key={t.id} value={t.id}>{t.label}</option>
+                  ))}
+                </select>
+                <button
+                  className="tmpl-apply"
+                  disabled={!tmplDuration && !tmplType}
+                  onClick={applyTemplate}
+                >
+                  ↙ Apply
+                </button>
+                {idea && (
+                  <button className="tmpl-clear" onClick={() => { setIdea(""); setTmplDuration(""); setTmplType(""); }}>
+                    ✕ Clear
+                  </button>
+                )}
+              </div>
 
               <div className="idea-box">
                 <textarea
