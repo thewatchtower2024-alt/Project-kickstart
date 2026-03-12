@@ -1032,13 +1032,10 @@ export default function App() {
   const [pipeStep, setPipeStep] = useState(-1);
   const [error,    setError]    = useState("");
 
-  const [tmplDuration, setTmplDuration] = useState("");
-  const [tmplType,     setTmplType]     = useState("");
+  const [tmplType, setTmplType] = useState("");
 
   const applyTemplate = () => {
-    const byDur  = TEMPLATES_BY_DURATION.find(t => t.id === tmplDuration);
-    const byType = TEMPLATES_BY_TYPE.find(t => t.id === tmplType);
-    const chosen = byDur || byType;
+    const chosen = TEMPLATES_BY_TYPE.find(t => t.id === tmplType);
     if (chosen) setIdea(chosen.text);
   };
 
@@ -1222,34 +1219,23 @@ export default function App() {
                 <span className="tmpl-label">Templates →</span>
                 <select
                   className="tmpl-select"
-                  value={tmplDuration}
-                  onChange={e => { setTmplDuration(e.target.value); setTmplType(""); }}
-                >
-                  <option value="">By Duration…</option>
-                  {TEMPLATES_BY_DURATION.map(t => (
-                    <option key={t.id} value={t.id}>{t.label} · {t.sublabel}</option>
-                  ))}
-                </select>
-                <span className="tmpl-divider" />
-                <select
-                  className="tmpl-select"
                   value={tmplType}
-                  onChange={e => { setTmplType(e.target.value); setTmplDuration(""); }}
+                  onChange={e => setTmplType(e.target.value)}
                 >
-                  <option value="">By Project Type…</option>
+                  <option value="">Select a project type…</option>
                   {TEMPLATES_BY_TYPE.map(t => (
                     <option key={t.id} value={t.id}>{t.label}</option>
                   ))}
                 </select>
                 <button
                   className="tmpl-apply"
-                  disabled={!tmplDuration && !tmplType}
+                  disabled={!tmplType}
                   onClick={applyTemplate}
                 >
                   ↙ Apply
                 </button>
                 {idea && (
-                  <button className="tmpl-clear" onClick={() => { setIdea(""); setTmplDuration(""); setTmplType(""); }}>
+                  <button className="tmpl-clear" onClick={() => { setIdea(""); setTmplType(""); }}>
                     ✕ Clear
                   </button>
                 )}
